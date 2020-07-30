@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script>
+      // ページの読み込みを待つ
+      window.addEventListener('load', init);
+
+      function init() {
+        // サイズを指定
+        const width = 960;
+        const height = 540;
+
+        // レンダラーを作成
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.querySelector('#myCanvas')
+        });
+        renderer.setSize(width, height);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        // カメラの初期座標を設定
+        camera.position.set(0, 0, 1000);
+
+        // カメラコントローラーを作成
+        const controls = new THREE.OrbitControls(camera);
+
+        // 箱を作成(原点に作成)
+        var geometry = new THREE.BoxGeometry(270, 270, 150);
+        var material = new THREE.MeshPhongMaterial({ color: 0x001100 });
+        var box = new THREE.Mesh(geometry, material);
+        scene.add(box);
+
+        //ドーナッツ
+        var torusGeometry = new THREE.TorusGeometry( 140, 90, 100, 100 ); 
+        //半径、ドーナッツの太さ、ドーナッツのチューブ方向の分割数、水平方向の分割数
+        var torusMaterial = new THREE. MeshPhongMaterial( { color: 0xD2691E } );
+         var torus = new THREE.Mesh( torusGeometry, torusMaterial );
+         torus.position.set( -1.7, 0, -20);
+         scene.add( torus );
+  
+        // 平行光源1
+        var directionalLight1 = new THREE.DirectionalLight(0xffffff);
+        directionalLight1.position.set(100, 100, 100);
+        // シーンに追加
+        scene.add(directionalLight1);
+        // 平行光源2
+        var directionalLight2 = new THREE.DirectionalLight(0xffffff);
+        directionalLight2.position.set(-100, 100, 100);
+        // シーンに追加
+        scene.add(directionalLight2);
+
+        tick();
+
+        // 毎フレーム時に実行されるループイベントです
+        function tick() {
+          // レンダリング
+          renderer.render(scene, camera);
+          requestAnimationFrame(tick);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+  </body>
+</html>
