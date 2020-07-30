@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>課題2</title>
+
+  <!-- three.jsを読み込む(ローカル) -->
+  <!-- <script src="./three.js"></script> -->
+  <!-- three.jsを読み込む(CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+</head>
+<script>
+  // ページの読み込みを待つ
+  window.addEventListener('load', init);
+
+  function init() {
+    // サイズを指定
+    const width = 960;
+    const height = 540;
+
+    // レンダラーを作成
+    const renderer = new THREE.WebGLRenderer({
+      canvas: document.querySelector('#myCanvas')
+    });
+    renderer.setSize(width, height);
+
+    // シーンを作成
+    const scene = new THREE.Scene();
+
+    // カメラを作成
+    const camera = new THREE.PerspectiveCamera(45, width / height);
+    // カメラの初期座標を設定
+    camera.position.set(0, 0, 1000);
+
+    // カメラコントローラーを作成
+    const controls = new THREE.OrbitControls(camera);
+
+    //四角形6面分のテクスチャー読み込み
+    var materials = [
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img1.png")}),
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img2.png")}),
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img3.png")}),
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img4.png")}),
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img5.png")}),
+      new THREE.MeshLambertMaterial({map:THREE.ImageUtils.loadTexture("img/img6.png")}),
+    ];
+    // マテリアルをセット
+    var material = new THREE.MeshFaceMaterial(materials); 
+
+    // テクスチャー読み込み
+    var textureLoader = new THREE.TextureLoader();  
+    var texture = textureLoader.load("face.jpg");
+    var mat = new THREE.MeshPhongMaterial();
+    mat.map = texture;
+
+
+    // 箱を作成(原点に作成)
+    var geometry = new THREE.BoxGeometry(200, 200, 200);
+    //var material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+    var box = new THREE.Mesh(geometry, material);
+    box.position.set(-100, 0, 0);
+    scene.add(box);;
+
+    //ドーナッツ
+    var torusGeometry = new THREE.TorusGeometry( 80, 40, 100, 100 ); 
+    //半径、ドーナッツの太さ、ドーナッツのチューブ方向の分割数、水平方向の分割数
+    var torusMaterial = new THREE. MeshPhongMaterial( { color: 0xD2691E } );
+     var torus = new THREE.Mesh( torusGeometry, torusMaterial );
+     torus.position.set( -500, 0, 0);
+     scene.add( torus );
+
+    //なんかクネクネしてるやつ
+    var torusKnotGeometry = new THREE.TorusKnotGeometry( 90, 18, 20, 6, 3, 2 ); 
+    //全体的な大きさ、チューブの太さ、クネクネの進む方向に対して何分割するか、
+    //チューブ方向に対して何分割するか、残りの二つの数字を変えるとクネクネの形が変わる
+    var torusKnotMaterial = new THREE. MeshPhongMaterial( { color: 0x00FF3B, wireframe: true } );
+    var torusKnot = new THREE.Mesh( torusKnotGeometry, torusKnotMaterial );
+    torusKnot.position.set( 300, 0, 0 );
+    scene.add( torusKnot );
+
+    //球
+    var sphereGeometry = new THREE.SphereGeometry( 70, 32, 32 ); 
+    //半径、垂直方向の分割数、水平方向の分割数
+    var sphereMaterial = new THREE. MeshPhongMaterial( {color: 0xFF0000,wireframe: true} );
+    var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+    sphere.position.set( -150, 0, -300 );
+    scene.add( sphere );
+
+    //球2
+    var sphereGeometry2 = new THREE.SphereGeometry( 70, 32, 32 ); 
+    //半径、垂直方向の分割数、水平方向の分割数
+    //var sphereMaterial2 = new THREE. MeshPhongMaterial( {color: 0xFFFFFF} );
+    var sphere2 = new THREE.Mesh( sphereGeometry2, mat );
+    sphere2.position.set( -150, 0, 950 );
+    scene.add( sphere2 );
+
+    // 平行光源1
+    var directionalLight1 = new THREE.DirectionalLight(0xffffff);
+    directionalLight1.position.set(100, 100, 100);
+    // シーンに追加
+    scene.add(directionalLight1);
+    // 平行光源2
+    var directionalLight2 = new THREE.DirectionalLight(0xffffff);
+    directionalLight2.position.set(-100, 100, 100);
+    // シーンに追加
+    scene.add(directionalLight2);
+
+    tick();
+
+    // 毎フレーム時に実行されるループイベントです
+    function tick() {
+      // レンダリング
+      // 初回実行
+      var update = function() {
+        requestAnimationFrame(update);
+
+        // 箱を回転させる
+        box.rotation.x += 0.00001;
+        box.rotation.y += 0.00001;
+
+        // ドーナッツを回転させる
+        torus.rotation.x += 0.00005;
+        torus.rotation.y += 0.00005;
+
+        // クネクネを回転させる
+        torusKnot.rotation.x += 0.00002;
+        torusKnot.rotation.y += 0.00002;
+        renderer.render(scene, camera);
+
+        // 球を回転・拡大させる
+        sphere.rotation.x += 0.00005;
+        sphere.rotation.y += 0.00005;
+
+        // 球2を回転・拡大させる
+        sphere2.rotation.x += 0.00005;
+        sphere2.rotation.y += 0.00005;
+        sphere2.rotation.z += 0.00005;
+
+      };
+      update();
+      requestAnimationFrame(tick);
+    }
+  }
+</script>
+</head>
+<body>
+<canvas id="myCanvas"></canvas>
+</body>
+</html>
