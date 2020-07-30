@@ -1,0 +1,174 @@
+<html>
+    <head>
+      <meta charset="utf-8" />
+      <title>最終課題</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+      <script src="OrbitControls.js"></script>
+      <script>
+      // ページの読み込みを待つ
+      window.addEventListener('load', init);
+
+      function init() {
+        // サイズを指定
+        const width = 960;
+        const height = 540;
+
+        // レンダラーを作成
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.querySelector('#myCanvas')
+        });
+        renderer.setSize(width, height);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // フォグを設定
+        scene.fog = new THREE.Fog(0x000000, 50, 2000);
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        // カメラの初期座標を設定
+        camera.position.set(0, 0, 1000);
+
+        // カメラコントローラーを作成
+        const controls = new THREE.OrbitControls(camera);
+        controls.autoRotate = true;
+
+        // helper
+        //const gridHelper = new THREE.GridHelper(1000,20); // size, step
+       // scene.add(gridHelper);
+       // const axisHelper = new THREE.AxisHelper(1000); //軸の長さ　X：赤、Y：緑、z：青
+        //scene.add(axisHelper);
+
+        // グループを作成
+        const group = new THREE.Group();
+        scene.add(group);
+
+        //箱を作成
+        const geometry = new THREE.BoxGeometry(2, 2, 2);
+        //const geometry = new THREE.BoxBufferGeometry(50, 50, 50);
+        const material = new THREE.MeshStandardMaterial();
+
+        //箱1000個作成
+        for (let i = 0; i < 2000; i++) {
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.position.x = (Math.random() - 0.5) * 2000;
+          mesh.position.y = (Math.random() - 0.5) * 2000;
+          mesh.position.z = (Math.random() - 0.5) * 2000;
+          mesh.rotation.x = Math.random() * 2 * Math.PI;
+          mesh.rotation.y = Math.random() * 2 * Math.PI;
+          mesh.rotation.z = Math.random() * 2 * Math.PI;
+          // グループに格納する
+          group.add(mesh);
+        }
+
+        //太陽用のテクスチャー読み込み
+        var textureLoader = new THREE.TextureLoader();  
+        var texture = textureLoader.load("taiyou.jpg");
+        var mat = new THREE.MeshPhongMaterial();
+        mat.map = texture;
+        //太陽を作成
+        var sphereGeometry = new THREE.SphereGeometry( 500, 32, 32 ); 
+        var sphere = new THREE.Mesh( sphereGeometry, mat );
+        sphere.position.set( 0, 0, 1500 );
+        scene.add( sphere );
+
+        //水星用のテクスチャー読み込み
+        var textureLoader1 = new THREE.TextureLoader();  
+        var texture1 = textureLoader1.load("suisei.jpg");
+        var mat1 = new THREE.MeshPhongMaterial();
+        mat1.map = texture1;
+        //水星を作成
+        var sphereGeometry1 = new THREE.SphereGeometry( 30, 32, 32 ); 
+        var sphere1 = new THREE.Mesh( sphereGeometry1, mat1 );
+        sphere1.position.set( 0, 0, 800 );
+        scene.add( sphere1 );
+
+        //金星用のテクスチャー読み込み
+        var textureLoader2 = new THREE.TextureLoader();  
+        var texture2 = textureLoader2.load("kinsei.jpg");
+        var mat2 = new THREE.MeshPhongMaterial();
+        mat2.map = texture2;
+        //金星を作成
+        var sphereGeometry2 = new THREE.SphereGeometry( 40, 32, 32 ); 
+        var sphere2 = new THREE.Mesh( sphereGeometry2, mat2 );
+        sphere2.position.set( 0, 0, 500 );
+        scene.add( sphere2 );
+ 
+        //地球用のテクスチャー読み込み
+        var textureLoader3 = new THREE.TextureLoader();  
+        var texture3 = textureLoader3.load("earthmap1k.jpg");
+        var mat3 = new THREE.MeshPhongMaterial();
+        mat3.map = texture3;
+        //地球を作成
+        var sphereGeometry3 = new THREE.SphereGeometry( 50, 32, 32 ); 
+        var sphere3 = new THREE.Mesh( sphereGeometry3, mat3 );
+        sphere3.position.set( 0, 0, 150 );
+        scene.add( sphere3 );
+
+        //火星用のテクスチャー読み込み
+        var textureLoader4 = new THREE.TextureLoader();  
+        var texture4 = textureLoader4.load("kasei.jpg");
+        var mat4 = new THREE.MeshPhongMaterial();
+        mat4.map = texture4;
+        //火星を作成
+        var sphereGeometry4 = new THREE.SphereGeometry( 30, 32, 32 ); 
+        var sphere4 = new THREE.Mesh( sphereGeometry4, mat4 );
+        sphere4.position.set( 0, 0, -50 );
+        scene.add( sphere4 );
+
+        //木星用のテクスチャー読み込み
+        var textureLoader5 = new THREE.TextureLoader();  
+        var texture5 = textureLoader5.load("mokusei.jpg");
+        var mat5 = new THREE.MeshPhongMaterial();
+        mat5.map = texture5;
+        //木星を作成
+        var sphereGeometry5 = new THREE.SphereGeometry( 400, 32, 32 ); 
+        var sphere5 = new THREE.Mesh( sphereGeometry5, mat5 );
+        sphere5.position.set( 0, 0, -1000 );
+        scene.add( sphere5 );
+
+  
+      　 // 光源（環境光）
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(ambientLight);
+
+        // 平行光源
+        var directionalLight1 = new THREE.DirectionalLight(0xffffff,1);
+        directionalLight1.position.set(1000, 1000, 700);
+        // シーンに追加
+        scene.add(directionalLight1);
+        
+
+        tick();
+
+        // 毎フレーム時に実行されるループイベントです
+        function tick() {
+
+            // 回転させる
+            sphere.rotation.x += 0.001;
+            sphere.rotation.y += 0.001;
+            sphere1.rotation.x += 0.001;
+            sphere1.rotation.y += 0.001;
+            sphere2.rotation.x += 0.001;
+            sphere2.rotation.y += 0.001;
+            sphere3.rotation.x += 0.005;
+            sphere3.rotation.y += 0.01;
+            sphere4.rotation.x += 0.001;
+            sphere4.rotation.y += 0.001;
+            sphere5.rotation.x += 0.001;
+            sphere5.rotation.y += 0.001;
+            
+            // レンダリング
+            group.rotateY(0.01);
+            renderer.render(scene, camera);
+            requestAnimationFrame(tick);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>
+  </body>
+</html>
+  
